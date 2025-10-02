@@ -118,7 +118,7 @@ const EmpleadoForm: React.FC<EmpleadoFormProps> = ({ initialData, onSubmit }) =>
       if (err.response && err.response.status === 400) {
         alert(err.response.data.message);
       } else {
-        alert("Error inesperado al guardar el proyecto");
+        alert("Error inesperado al guardar el Empleado");
       }
     }
   };
