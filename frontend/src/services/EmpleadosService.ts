@@ -27,8 +27,6 @@ export const getEmpleados = async (filters?: {
     if (filters.idProyecto && filters.idProyecto !== 0) params.idProyecto = filters.idProyecto;
   }
 
-  console.log("Query params enviados al backend:", params);
-
   const res = await axios.get(API_URL, { params });
   return res.data;
 };

@@ -32,6 +32,7 @@ const EditEmpleadoPage: React.FC = () => {
           Correo: emp.Correo,
           idProyecto: emp.idProyecto,
           NombreProyecto: emp.NombreProyecto,
+          Telefono: emp.Telefono
         });
       });
     }

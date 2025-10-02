@@ -71,9 +71,10 @@ export const insertEmpleado = async (req: Request, res: Response) => {
             Sueldo,
             // Estatus,
             Correo,
-            idProyecto
+            idProyecto,
+            Telefono
         } = req.body;
-
+console.log('Telefono :>> ', Telefono);
         const pool = await getPool();
         const result = await pool.request()
             .input("Nombre", sql.VarChar(50), Nombre)
@@ -84,6 +85,7 @@ export const insertEmpleado = async (req: Request, res: Response) => {
             .input("Sueldo", sql.Numeric(10,2), Sueldo)
             // .input("Estatus", sql.Bit, Estatus)
             .input("Correo", sql.VarChar(50), Correo)
+            .input("Telefono", sql.VarChar(15), Telefono)
             .input("idProyecto", sql.Int, idProyecto)
             .execute("sp_InsertEmpleado");
 
@@ -112,7 +114,8 @@ export const updateEmpleado = async (req: Request, res: Response) => {
             Sueldo,
             Estatus,
             Correo,
-            idProyecto
+            idProyecto,
+            Telefono
         } = req.body;
 
         const pool = await getPool();
@@ -127,6 +130,7 @@ export const updateEmpleado = async (req: Request, res: Response) => {
             .input("Estatus", sql.Bit, Estatus)
             .input("Correo", sql.VarChar(50), Correo)
             .input("idProyecto", sql.Int, idProyecto)
+            .input("Telefono", sql.VarChar(50), Telefono)
             .execute("[sp_UpdateEmpleado]");
 
         res.json({ message: "Empleado actualizado" });

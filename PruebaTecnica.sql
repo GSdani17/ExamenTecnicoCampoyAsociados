@@ -32,6 +32,7 @@ CREATE TABLE [dbo].[Empleados](
 	[Estatus] [bit] NOT NULL,
 	[Correo] [varchar](50) NOT NULL,
 	[idProyecto] [int] NOT NULL,
+	[Telefono] [varchar](15) NULL,
  CONSTRAINT [PK_Empleados] PRIMARY KEY CLUSTERED 
 (
 	[idEmpleado] ASC
@@ -47,6 +48,7 @@ GO
 
 ALTER TABLE [dbo].[Empleados] CHECK CONSTRAINT [FK_Empleados_Proyecto]
 GO
+
 
 
 --tabla Usuario----------------------------------------
@@ -94,7 +96,8 @@ BEGIN
         e.Estatus,
         e.Correo,
         p.idProyecto,
-        p.NombreProyecto
+        p.NombreProyecto,
+		e.Telefono
     FROM Empleados e
     LEFT JOIN Proyecto p ON e.idProyecto = p.idProyecto
     WHERE
@@ -106,7 +109,6 @@ BEGIN
         AND (@idProyecto IS NULL OR e.idProyecto = @idProyecto);
 END
 
-
  
 --Procedimiento almacenado sp_InsertEmpleado
 
@@ -117,7 +119,8 @@ CREATE PROCEDURE [dbo].[sp_InsertEmpleado]
     @FechaNacimiento DATE,
     @Sueldo NUMERIC(10,2),
     @Correo VARCHAR(50),
-    @idProyecto INT
+    @idProyecto INT,
+	@Telefono varchar(15)
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -126,6 +129,12 @@ BEGIN
     IF EXISTS (SELECT 1 FROM Empleados WHERE Correo = @Correo)
     BEGIN
         RAISERROR('Ya existe un empleado con este correo', 16, 1);
+        RETURN;
+    END
+
+	    IF EXISTS (SELECT 1 FROM Empleados WHERE Telefono = @Telefono)
+    BEGIN
+        RAISERROR('Ya existe un empleado con este Telefono', 16, 1);
         RETURN;
     END
 
@@ -142,15 +151,15 @@ BEGIN
     --END
 
     INSERT INTO Empleados
-        (Nombre, ApellidoPaterno, ApellidoMaterno, FechaNacimiento, FechaAlta, Sueldo, Estatus, Correo, idProyecto)
+        (Nombre, ApellidoPaterno, ApellidoMaterno, FechaNacimiento, FechaAlta, Sueldo, Estatus, Correo, idProyecto,Telefono)
     VALUES
-        (@Nombre, @ApellidoPaterno, @ApellidoMaterno, @FechaNacimiento, GETDATE(), @Sueldo, 1, @Correo, @idProyecto);
+        (@Nombre, @ApellidoPaterno, @ApellidoMaterno, @FechaNacimiento, GETDATE(), @Sueldo, 1, @Correo, @idProyecto,@Telefono);
 
     SELECT SCOPE_IDENTITY() AS idEmpleado;
 END
 
 --Procediento Almacenado sp_UpdateEmpleado----------------------------------------
-CREATE PROCEDURE [dbo].[sp_UpdateEmpleado]
+ALTER PROCEDURE [dbo].[sp_UpdateEmpleado]
     @idEmpleado INT,
     @Nombre VARCHAR(50),
     @ApellidoPaterno VARCHAR(50),
@@ -160,7 +169,8 @@ CREATE PROCEDURE [dbo].[sp_UpdateEmpleado]
     @Sueldo NUMERIC(10,2),
     @Estatus BIT,
     @Correo VARCHAR(50),
-    @idProyecto INT
+    @idProyecto INT,
+	@Telefono varchar(20)
 AS
 BEGIN
     -- Validar si el correo ya existe en otro empleado
@@ -175,6 +185,18 @@ BEGIN
         RETURN;
     END
 
+	    IF EXISTS (
+        SELECT 1
+        FROM Empleados
+        WHERE Telefono = @Telefono
+          AND idEmpleado <> @idEmpleado
+    )
+    BEGIN
+        RAISERROR('Ya existe un empleado con este telefono', 16, 1);
+        RETURN;
+    END
+
+
     UPDATE Empleados
     SET Nombre = @Nombre,
         ApellidoPaterno = @ApellidoPaterno,
@@ -184,7 +206,8 @@ BEGIN
         Sueldo = @Sueldo,
         Estatus = @Estatus,
         Correo = @Correo,
-        idProyecto = @idProyecto
+        idProyecto = @idProyecto,
+		telefono = @Telefono
     WHERE idEmpleado = @idEmpleado;
 END
 

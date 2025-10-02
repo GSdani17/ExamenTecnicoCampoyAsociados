@@ -9,5 +9,6 @@ export interface Empleado {
     Estatus: boolean;
     Correo: string;
     idProyecto: number;       
-    NombreProyecto: string;   
+    NombreProyecto: string; 
+    Telefono: string;
   }

@@ -169,6 +169,7 @@ const EmpleadoList: React.FC = () => {
             <th>Fecha Alta</th>
             <th>Sueldo</th>
             <th>Correo</th>
+            <th>Telefono</th>
             <th>Estatus</th>
             <th>Proyecto</th>
             <th>Acciones</th>
@@ -183,6 +184,7 @@ const EmpleadoList: React.FC = () => {
               <td>{new Date(new Date(emp.FechaAlta).getTime()).toLocaleDateString()}</td>
               <td>{emp.Sueldo.toFixed(2)}</td>
               <td>{emp.Correo}</td>
+              <td>{emp.Telefono}</td>
               <td>{emp.Estatus ? "Activo" : "Inactivo"}</td>
               <td>{emp.NombreProyecto}</td>
               <td>

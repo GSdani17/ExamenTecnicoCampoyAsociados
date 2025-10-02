@@ -18,6 +18,7 @@ const EmpleadoForm: React.FC<EmpleadoFormProps> = ({ initialData, onSubmit }) =>
     Sueldo: 0,
     Estatus: true,
     Correo: "",
+    Telefono: "", 
     idProyecto: 0,
     NombreProyecto: "",
     ...initialData,
@@ -45,6 +46,7 @@ const EmpleadoForm: React.FC<EmpleadoFormProps> = ({ initialData, onSubmit }) =>
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     const soloLetras = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]*$/;
+    const telefonoRegex = /^[0-9]{0,10}$/; // permite hasta 10 mientras escribe
 
     if (name === "Nombre" || name === "ApellidoPaterno" || name === "ApellidoMaterno") {
       if (!soloLetras.test(value)) {
@@ -52,6 +54,21 @@ const EmpleadoForm: React.FC<EmpleadoFormProps> = ({ initialData, onSubmit }) =>
         return;
       } else {
         setErrors({ ...errors, [name]: "" });
+      }
+    }
+
+    if (name === "Telefono") {
+      if (!telefonoRegex.test(value)) {
+        return; 
+      }
+
+      if (value.length !== 10 && value.length > 0) {
+        setErrors({
+          ...errors,
+          Telefono: "El teléfono debe tener exactamente 10 dígitos",
+        });
+      } else {
+        setErrors({ ...errors, Telefono: "" });
       }
     }
 
@@ -86,6 +103,11 @@ const EmpleadoForm: React.FC<EmpleadoFormProps> = ({ initialData, onSubmit }) =>
       return;
     }
 
+    if (!form.Telefono || form.Telefono.length !== 10) {
+      alert("Debe ingresar un teléfono válido de 10 dígitos");
+      return;
+    }
+
     try {
       await onSubmit({
         ...form,
@@ -102,7 +124,7 @@ const EmpleadoForm: React.FC<EmpleadoFormProps> = ({ initialData, onSubmit }) =>
   };
 
   const handleReset = () => {
-    setForm(initialFormState); // reinicia el formulario
+    setForm(initialFormState); 
     setErrors({});
   };
 
@@ -201,6 +223,20 @@ const EmpleadoForm: React.FC<EmpleadoFormProps> = ({ initialData, onSubmit }) =>
         </div>
 
         <div className="col-md-4">
+          <label className="form-label">Teléfono:</label>
+          <input
+            type="text"
+            name="Telefono"
+            value={form.Telefono}
+            onChange={handleChange}
+            className={`form-control ${errors.Telefono ? "is-invalid" : ""}`}
+            required
+            maxLength={10}
+          />
+          {errors.Telefono && <div className="invalid-feedback">{errors.Telefono}</div>}
+        </div>
+
+        <div className="col-md-4">
           <label className="form-label">Proyecto:</label>
           <select
             name="idProyecto"
@@ -244,7 +280,12 @@ const EmpleadoForm: React.FC<EmpleadoFormProps> = ({ initialData, onSubmit }) =>
         <button type="submit" className="btn btn-primary">
           Guardar
         </button>
-        <button type="button" hidden={form.FechaAlta !== ""} className="btn btn-secondary" onClick={handleReset}>
+        <button
+          type="button"
+          hidden={form.FechaAlta !== ""}
+          className="btn btn-secondary"
+          onClick={handleReset}
+        >
           Limpiar Formulario
         </button>
       </div>
